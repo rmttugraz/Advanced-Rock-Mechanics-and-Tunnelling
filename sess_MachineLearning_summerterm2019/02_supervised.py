@@ -102,11 +102,10 @@ plt.close()
 
 
 ###############################################################################
-# machine learning: train a scikit learn implementation of a Perceptron
-# (Rosenblatt, 1957) with the training data and test it on the test data.
-#
-# Rosenblatt, F. (1957) ‘The Perceptron: A Perceiving and Recognizing
-# Automaton’, Cornell Aeronatuical Laboratory.
+# machine learning: train a scikit learn (Pedregosa et al., 2011)
+# implementation of a Perceptron (Rosenblatt, 1957) with the training data and
+# test it on the test data.
+
 
 n_epochs = 30  # number of training epochs
 clf = Perceptron(max_iter=n_epochs, tol=None)
@@ -149,3 +148,16 @@ plt.tight_layout()
 ax.legend(fontsize=15)
 plt.savefig(fr'supervised_epoch{n_epochs}.jpg', dpi=600)
 plt.close()
+
+'''
+References:
+
+Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel,
+O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J.,
+Passos, A., Cournapeau, D., Brucher, M., Perrot, M. and Édouard, D. (2011)
+‘Scikit-learn: Machine Learning in Python’,
+Journal of Machine Learning Research, no. 12, pp. 2825–2830.
+
+Rosenblatt, F. (1957) ‘The Perceptron: A Perceiving and Recognizing
+Automaton’, Cornell Aeronatuical Laboratory.
+'''
