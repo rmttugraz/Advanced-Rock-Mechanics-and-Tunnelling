@@ -39,10 +39,7 @@ df_tot = pd.concat((df_gneiss, df_marl), join='outer')
 # train test - split because otherwise the train and test data would have
 # slightly different scales
 
-# create all positive tensile strength values
-df_tot['SPZ'] = df_tot['SPZ'] * -1
-shift = df_tot['SPZ'].min() * -1
-df_tot['SPZ'] = df_tot['SPZ'].values + shift
+# scale features between 0 & 1
 for feature in df_tot.columns:
     df_tot[feature] = df_tot[feature] / df_tot[feature].max()
 
