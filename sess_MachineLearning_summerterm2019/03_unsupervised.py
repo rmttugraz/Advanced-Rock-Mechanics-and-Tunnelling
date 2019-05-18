@@ -36,10 +36,7 @@ df_tot = pd.concat((df_gneiss, df_marl), join='outer')
 # scale samples between 0 and 1: scaling must be done after concatenation of
 # the dataframes, because otherwise the data clusters would overlap.
 
-# create all positive tensile strength values
-df_tot['SPZ'] = df_tot['SPZ'] * -1
-shift = df_tot['SPZ'].min() * -1
-df_tot['SPZ'] = df_tot['SPZ'].values + shift
+# scale features between 0 & 1
 for feature in df_tot.columns:
     df_tot[feature] = df_tot[feature] / df_tot[feature].max()
 
@@ -71,18 +68,26 @@ data = df_tot.sample(frac=1)  # shuffle data
 
 
 clfs = [KMeans(n_clusters=2),
-        MeanShift(bandwidth=0.24),
+        MeanShift(bandwidth=0.33),
         AgglomerativeClustering(n_clusters=2)]
 
 for clf in clfs:
+
+    algo_name = str(clf).split('(')[0]
 
     features = ['UCS', 'SPZ']
     clf.fit(data[features].values)
 
     classification = clf.labels_
 
-    accuracy = accuracy_score(data['label'], classification)
-    print(f'accuracy: {accuracy * 100}%')
+    acc = round(accuracy_score(data['label'], classification), 3) * 100
+
+    # flip 0 and 1 to see if bad performance is simply caused by the order of
+    # cluster label assignement (would happen to MeanShift)
+    if acc < 50:
+        classification = 1 - classification
+        acc = round(accuracy_score(data['label'], classification), 3) * 100
+    print(f'accuracy: {acc}%')
 
     # visualization of clusters with marked wrong classifications
     fig, ax = plt.subplots(figsize=(9, 6))
@@ -93,10 +98,12 @@ for clf in clfs:
 
     ax.scatter(data['UCS'].iloc[idx_class_gneiss],
                data['SPZ'].iloc[idx_class_gneiss],
-               color='C0', alpha=1, label='classified as gneiss')
+               color='C0', alpha=1, edgecolor='black', s=pointsize,
+               label='classified as gneiss')
     ax.scatter(data['UCS'].iloc[idx_class_marl],
                data['SPZ'].iloc[idx_class_marl],
-               color='C1', alpha=1, label='classified as marl')
+               color='C1', alpha=1, edgecolor='black', s=pointsize,
+               label='classified as marl')
     ax.scatter(data['UCS'].iloc[idx_wrong],
                data['SPZ'].iloc[idx_wrong],
                edgecolors='red', marker='o', facecolors='None',
@@ -106,10 +113,10 @@ for clf in clfs:
     ax.grid(alpha=0.5)
     ax.set_xlabel('UCS [normalized]', size=labelsize)
     ax.set_ylabel('tensile strength [normalized]', size=labelsize)
-    plt.tight_layout()
+    ax.set_title(f'{algo_name}: accuracy {acc}%', size=labelsize)
     ax.legend(fontsize=15)
 
-    algo_name = str(clfs[0]).split('(')[0]
+    plt.tight_layout()
     plt.savefig(f'unsupervised_{algo_name}.jpg', dpi=600)
 
 '''
