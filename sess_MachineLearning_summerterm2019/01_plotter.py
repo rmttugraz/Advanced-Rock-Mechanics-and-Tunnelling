@@ -14,7 +14,7 @@ df_marl = pd.read_csv('marl.csv')
 
 # plot data with several scatterplots
 
-fig = plt.figure(figsize=(12,8))
+fig = plt.figure(figsize=(12, 8))
 
 ax = fig.add_subplot(2, 3, 1)
 ax.scatter(df_gneiss['UCS'], df_gneiss['SPZ'], alpha=0.5, color='black')
